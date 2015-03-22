@@ -33,6 +33,11 @@
   - name: Ensure postgresql is installed
     apt: name=postgresql
 
+# $ sudo -u postgres createuser -D -A -P mydatabaseuser
+# Enter password for new role: 
+# Enter it again: 
+# $ sudo -u postgres createdb -O mydatabaseuser mydatabase
+
   - name: ensure database is created
     sudo_user: postgres
     postgresql_db: name=mydatabase
