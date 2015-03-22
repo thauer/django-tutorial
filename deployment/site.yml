@@ -71,3 +71,6 @@
 
   - name: enable host mysite
     file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
+
+  - name: django sync
+    django_manage: command=syncdb app_path=/var/www/mysite
