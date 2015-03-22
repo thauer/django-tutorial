@@ -1,0 +1,30 @@
+---
+# file: site.yml
+# Master playbook
+
+# Gather facts first:
+- hosts: all
+
+- hosts: allinone
+  sudo: yes
+  tasks: 
+  - name: Update APT package cache
+    apt: upgrade=dist update_cache=yes cache_valid_time=3600
+
+  - name: Install gunicorn
+    apt: name=gunicorn
+
+  - name: Create the www root directory
+    file: path=/var/www state=directory
+      owner=www-data group=www-data
+
+  - name: Copy the wsgi example
+    copy: src=../wsgi_example dest="/var/www/" owner=www-data group=www-data 
+
+  - name: Copy the config
+    copy: src=files/wsgi_example.conf dest="/etc/gunicorn.d/"
+
+  - name: Restart gunicorn service
+    service: name=gunicorn state=restarted
+    changed_when: False
+
