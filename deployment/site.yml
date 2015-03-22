@@ -28,7 +28,7 @@
     apt: name=python-django
 
   - name: Copy the django project
-    copy: src=../mysite dest="/var/www/" owner=www-data group=www-data 
+    copy: src=../mysite dest=/var/www/ owner=www-data group=www-data 
 
   - name: Copy the config
     copy: src=files/mysite.conf dest="/etc/gunicorn.d/"
@@ -37,3 +37,14 @@
     service: name=gunicorn state=restarted
     changed_when: False
 
+  - name: Install nginx
+    apt: name=nginx
+
+  - name: Disable default host
+    file: path=/etc/nginx/sites-enabled/default state=absent
+
+  - name: Copy the host configuration mysite
+    copy: src=files/mysite dest=/etc/nginx/sites-available/
+
+  - name: enable host mysite
+    file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
