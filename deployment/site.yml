@@ -11,66 +11,77 @@
   - name: Update APT package cache
     apt: upgrade=dist update_cache=yes cache_valid_time=3600
 
-  - name: Install gunicorn
-    apt: name=gunicorn
-
-  - name: Create the www root directory
-    file: path=/var/www state=directory
-      owner=www-data group=www-data
-
-  - name: Copy the wsgi example
-    copy: src=../wsgi_example dest="/var/www/" owner=www-data group=www-data 
-
-  - name: Copy the config
-    copy: src=files/wsgi_example.conf dest="/etc/gunicorn.d/"
-
-  - name: Install django
-    apt: name=python-django
-
-  - name: Install psycopg2
-    apt: name=python-psycopg2
-
   - name: Ensure postgresql is installed
-    apt: name=postgresql
+    apt: name={{item}}
+    with_items: 
+      - postgresql
+      - postgresql-contrib
+      - python-psycopg2
 
 # $ sudo -u postgres createuser -D -A -P mydatabaseuser
-# Enter password for new role: 
-# Enter it again: 
 # $ sudo -u postgres createdb -O mydatabaseuser mydatabase
 
-  - name: ensure database is created
+  - name: Create user
     sudo_user: postgres
-    postgresql_db: name=mydatabase
+    postgresql_user: name=mydatabaseuser password=mypassword role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
 
-  - name: ensure user has access to database
+  - name: Create database
     sudo_user: postgres
-    postgresql_user: db=mydatabase name=mydatabaseuser password=mypassword priv=ALL
+    postgresql_db: name=mydatabase owner=mydatabaseuser
 
-  - name: ensure user does not have unnecessary privilege
-    sudo_user: postgres
-    postgresql_user: name=mydatabaseuser role_attr_flags=NOSUPERUSER,NOCREATEDB
+  - name: Create the www root directory
+    file: path=/var/www/django-tutorial state=directory
+      owner=www-data group=www-data
 
-  - name: Copy the django project
-    copy: src=../mysite dest=/var/www/ owner=www-data group=www-data 
+  - name: Install virtualenv
+    apt: name=python-virtualenv
 
-  - name: Copy the config
-    copy: src=files/mysite.conf dest="/etc/gunicorn.d/"
+  - name: Create the virtualenv
+    sudo_user: www-data
+    command: virtualenv /var/www/django-tutorial --no-site-packages
+      creates=/var/www/django-tutorial/bin/activate
 
-  - name: Restart gunicorn service
-    service: name=gunicorn state=restarted
-    changed_when: False
+  - name: Install django
+    pip: virtualenv=/var/www/django-tutorial name=django 
 
-  - name: Install nginx
-    apt: name=nginx
 
-  - name: Disable default host
-    file: path=/etc/nginx/sites-enabled/default state=absent
+#   - name: Copy the wsgi example
+#     copy: src=../wsgi_example dest="/var/www/" owner=www-data group=www-data 
 
-  - name: Copy the host configuration mysite
-    copy: src=files/mysite dest=/etc/nginx/sites-available/
+#   - name: Copy the config
+#     copy: src=files/wsgi_example.conf dest="/etc/gunicorn.d/"
 
-  - name: enable host mysite
-    file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
+#   - name: Install django
+#     apt: name=python-django
 
-  - name: django sync
-    django_manage: command=syncdb app_path=/var/www/mysite
+#   - name: Install psycopg2
+#     apt: name=python-psycopg2
+
+#   - name: Copy the django project
+#     copy: src=../mysite dest=/var/www/ owner=www-data group=www-data 
+
+#   - name: Copy the config
+#     copy: src=files/mysite.conf dest="/etc/gunicorn.d/"
+
+#   - name: Restart gunicorn service
+#     service: name=gunicorn state=restarted
+#     changed_when: False
+
+#   - name: Install nginx
+#     apt: name=nginx
+
+#   - name: Disable default host
+#     file: path=/etc/nginx/sites-enabled/default state=absent
+
+#   - name: Copy the host configuration mysite
+#     copy: src=files/mysite dest=/etc/nginx/sites-available/
+
+#   - name: enable host mysite
+#     file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
+
+#   - name: django sync
+#     django_manage: command=syncdb app_path=/var/www/mysite
+
+#   - name: Install gunicorn
+#     apt: name=gunicorn
+
