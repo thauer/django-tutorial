@@ -9,7 +9,10 @@
   sudo: yes
   tasks: 
   - name: Update APT package cache
-    apt: upgrade=dist update_cache=yes cache_valid_time=3600
+    apt: update_cache=yes cache_valid_time=3600
+
+  - name: Upgrade packages
+    apt: upgrade=dist
 
   - name: Ensure postgresql is installed
     apt: name={{item}}
@@ -17,6 +20,8 @@
       - postgresql
       - postgresql-contrib
       - python-psycopg2
+      - python-dev
+      - libpq-dev
 
 # $ sudo -u postgres createuser -D -A -P mydatabaseuser
 # $ sudo -u postgres createdb -O mydatabaseuser mydatabase
@@ -37,12 +42,21 @@
     apt: name=python-virtualenv
 
   - name: Create the virtualenv
-    sudo_user: www-data
     command: virtualenv /var/www/django-tutorial --no-site-packages
       creates=/var/www/django-tutorial/bin/activate
 
-  - name: Install django
-    pip: virtualenv=/var/www/django-tutorial name=django 
+  - name: Install django, psycopg2 and gunicorn
+    pip: virtualenv=/var/www/django-tutorial name={{item}}
+    with_items:
+      - django 
+      - psycopg2
+      - gunicorn
+
+  - name: Copy the django project
+    copy: src=../mysite dest=/var/www/django-tutorial/
+      owner=www-data group=www-data
+
+  - copy: src=files/gunicorn_start.sh dest=/var/www/django-tutorial/bin/ mode=0755
 
 
 #   - name: Copy the wsgi example
@@ -50,15 +64,6 @@
 
 #   - name: Copy the config
 #     copy: src=files/wsgi_example.conf dest="/etc/gunicorn.d/"
-
-#   - name: Install django
-#     apt: name=python-django
-
-#   - name: Install psycopg2
-#     apt: name=python-psycopg2
-
-#   - name: Copy the django project
-#     copy: src=../mysite dest=/var/www/ owner=www-data group=www-data 
 
 #   - name: Copy the config
 #     copy: src=files/mysite.conf dest="/etc/gunicorn.d/"
