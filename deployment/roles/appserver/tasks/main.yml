@@ -1,0 +1,53 @@
+---
+# file: roles/appserver/tasks/main.yml
+
+# postgres-contrib???
+
+- name: Ensure virtualenv and libpq (linking C) are installed
+  apt: name={{item}}
+  with_items: 
+    - python-dev
+    - libpq-dev
+    - python-virtualenv
+
+- name: Create webapps group
+  group: name={{ group }} system=yes
+
+- name: Create hello user
+  user: name={{ user }} group={{ group }} system=yes shell=/bin/bash home=/webapps
+
+- name: Create the www root directory
+  sudo_user: "{{ user }}"
+  file: path=/webapps/django-tutorial state=directory
+
+- name: Create the virtualenv
+  sudo_user: "{{ user }}"
+  command: virtualenv /webapps/django-tutorial
+    creates=/webapps/django-tutorial/bin/activate
+
+- name: Install django, psycopg2 and gunicorn
+  sudo_user: "{{ user }}"
+  pip: virtualenv=/webapps/django-tutorial name={{item}}
+  with_items:
+    - django 
+    - psycopg2
+    - gunicorn
+    - supervisor
+
+- name: Install gunicorn start script
+  copy: src=files/gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
+  sudo_user: "{{ user }}"
+
+- name: Copy the django project
+  sudo_user: "{{ user }}"
+  copy: src=../mysite dest=/webapps/django-tutorial/
+
+- name: django sync database
+  sudo_user: "{{ user }}"
+  django_manage: command=syncdb app_path=/webapps/django-tutorial/mysite
+    virtualenv=/webapps/django-tutorial
+
+- name: django sync static files
+  django_manage: command=collectstatic app_path=/webapps/django-tutorial/mysite
+    virtualenv=/webapps/django-tutorial
+  sudo_user: "{{ user }}"

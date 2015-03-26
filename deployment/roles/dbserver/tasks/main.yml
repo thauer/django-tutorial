@@ -1,0 +1,35 @@
+---
+# file: roles/dbserver/tasks/main.yml
+
+- name: Ensure postgresql is installed
+  apt: name={{item}}
+  with_items: 
+    - postgresql
+    - python-psycopg2
+
+# $ sudo -u postgres createuser -D -A -P mydatabaseuser
+# $ sudo -u postgres createdb -O mydatabaseuser mydatabase
+
+- name: Create database user
+  sudo_user: postgres
+  postgresql_user: name=mydatabaseuser password=mypassword role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
+
+- name: Create database
+  sudo_user: postgres
+  postgresql_db: name=mydatabase owner=mydatabaseuser
+
+- name: Listen
+  sudo_user: postgres
+  lineinfile: dest=/etc/postgresql/9.3/main/postgresql.conf regexp='^listen_addresses = '
+    line='listen_addresses = *' 
+  register: pgconf1
+
+- name: Allow access
+  sudo_user: postgres
+  lineinfile: dest=/etc/postgresql/9.3/main/pg_hba.conf line="host all all 10.15.20.0/24 md5"
+    insertafter="EOF"
+  register: pgconf2
+
+- name: Restart
+  service: name="postgresql" state="restarted"
+  when: pgconf1.changed or pgconf2.changed

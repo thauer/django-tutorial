@@ -1,0 +1,6 @@
+---
+# file: group_vars/all/vars_file.yml
+
+group: webapps
+user: webapps
+webapp: django-tutorial

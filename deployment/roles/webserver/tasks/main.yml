@@ -1,0 +1,18 @@
+---
+# file: roles/webserver/tasks/main.yml
+
+- name: Ensure nginx is installed
+  apt: name=nginx
+
+- name: Disable the default host
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Copy the host configuration mysite
+  copy: src=mysite dest=/etc/nginx/sites-available/
+
+- name: enable host mysite
+  file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
+
+- name: restart ngingx
+  service: name=nginx state=restarted
+  changed_when: False

@@ -2,15 +2,9 @@
 # file: site.yml
 # Master playbook
 
-# Gather facts first:
 - hosts: all
-
-- hosts: allinone
-  sudo: yes
-  vars:
-    group: webapps
-    user: webapps
-    
+  tags: all
+  sudo: yes    
   tasks: 
   - name: Update APT package cache
     apt: update_cache=yes cache_valid_time=3600
@@ -18,96 +12,18 @@
   - name: Upgrade packages
     apt: upgrade=dist
 
-  - name: Ensure postgresql and python thingies are installed
-    apt: name={{item}}
-    with_items: 
-      - postgresql
-      - postgresql-contrib
-      - python-psycopg2
-      - python-dev
-      - libpq-dev
-      - python-virtualenv
+- hosts: dbserver
+  tags: dbserver
+  sudo: yes
+  roles: [dbserver]
 
-# $ sudo -u postgres createuser -D -A -P mydatabaseuser
-# $ sudo -u postgres createdb -O mydatabaseuser mydatabase
+- hosts: webserver
+  tags: webserver
+  sudo: yes
+  roles: [webserver]
 
-  - name: Create database user
-    sudo_user: postgres
-    postgresql_user: name=mydatabaseuser password=mypassword role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
-
-  - name: Create database
-    sudo_user: postgres
-    postgresql_db: name=mydatabase owner=mydatabaseuser
-
-# sudo groupadd --system webapps
-# sudo useradd --system --gid webapps --shell /bin/bash --home /webapps/hello_django hello
-
-  - name: Create the /webapps directory
-    file: path=/webapps state=directory
-
-  - name: Create webapps group
-    group: name=webapps system=yes
-
-  - name: Create hello user
-    user: name=hello group=webapps system=yes shell=/bin/bash home=/webapps/hello_django
-
-# $ sudo mkdir -p /webapps/hello_django/
-# $ sudo chown hello /webapps/hello_django/
-
-  - name: Create the www root directory
-    file: path=/webapps/hello_django state=directory
-      owner=hello group=webapps
-
-  - name: Create the virtualenv
-    sudo_user: hello
-    command: virtualenv /webapps/hello_django
-      creates=/webapps/hello_django/bin/activate
-
-  - name: Install django, psycopg2 and gunicorn
-    sudo_user: hello
-    pip: virtualenv=/webapps/hello_django name={{item}}
-    with_items:
-      - django 
-      - psycopg2
-      - gunicorn
-
-  - copy: src=files/gunicorn_start.sh dest=/webapps/hello_django/bin/ mode=0755
-    sudo_user: hello
-
-  - name: Copy the django project
-    copy: src=../mysite dest=/webapps/hello_django/
-      owner=hello group=webapps
-
-#   - name: django sync
-#     django_manage: command=syncdb app_path=/var/www/mysite
-
-  - name: Static shit
-    command: python manage.py collectstatic
-      chdir=/webapps/hello_django/mysite
-
-#   - name: Copy the wsgi example
-#     copy: src=../wsgi_example dest="/var/www/" owner=www-data group=www-data 
-
-#   - name: Copy the config
-#     copy: src=files/wsgi_example.conf dest="/etc/gunicorn.d/"
-
-#   - name: Copy the config
-#     copy: src=files/mysite.conf dest="/etc/gunicorn.d/"
-
-#   - name: Restart gunicorn service
-#     service: name=gunicorn state=restarted
-#     changed_when: False
-
-  - name: Install nginx
-    apt: name=nginx
-
-  - name: Disable default host
-    file: path=/etc/nginx/sites-enabled/default state=absent
-
-  - name: Copy the host configuration mysite
-    copy: src=files/mysite dest=/etc/nginx/sites-available/
-
-  - name: enable host mysite
-    file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
-
+- hosts: appserver
+  tags: appserver
+  sudo: yes
+  roles: [appserver]
 

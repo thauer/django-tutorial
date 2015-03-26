@@ -1,2 +1,8 @@
-[allinone]
-10.15.20.160
+[webserver]
+10.15.20.84
+
+[appserver]
+10.15.20.82
+
+[dbserver]
+10.15.20.83

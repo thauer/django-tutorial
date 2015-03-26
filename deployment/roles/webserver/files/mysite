@@ -1,11 +1,8 @@
 # nginx configuration
 
 upstream app_server_djangoapp {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
  
-  server unix:/webapps/hello_django/run/gunicorn.sock fail_timeout=0;
+  server unix:/webapps/django-tutorial/run/gunicorn.sock fail_timeout=0;
 
   # server localhost:8002 fail_timeout=0; 
 }
@@ -21,15 +18,12 @@ server {
 
     keepalive_timeout 5;
 
-    # path for static files
-    # root /var/www/mysite/static;
-
     location /static/ {
-        alias   /webapps/hello_django/static/;
+        alias   /webapps/django-tutorial/static/;
     }
     
     location /media/ {
-        alias   /webapps/hello_django/media/;
+        alias   /webapps/django-tutorial/media/;
     }
  
     location / {
@@ -46,6 +40,6 @@ server {
     # Error pages
     error_page 500 502 503 504 /500.html;
     location = /500.html {
-        root /webapps/hello_django/static/;
+        root /webapps/django-tutorial/static/;
     }
 }
