@@ -1,13 +1,13 @@
 #!/bin/bash
  
-NAME="django-tutorial"                                # Name of the application
-DJANGODIR=/var/www/django-tutorial/mysite             # Django project directory
-SOCKFILE=/var/www/django-tutorial/run/gunicorn.sock   # we will communicte using this unix socket
-USER=www-data                                         # the user to run as
-GROUP=www-data                                        # the group to run as
-NUM_WORKERS=3                                         # how many worker processes should Gunicorn spawn
-DJANGO_SETTINGS_MODULE=hello.settings                 # which settings file should Django use
-DJANGO_WSGI_MODULE=mysite.settings                    # WSGI module name
+NAME="hello_app"                                  # Name of the application
+DJANGODIR=/webapps/hello_django/mysite            # Django project directory
+SOCKFILE=/webapps/hello_django/run/gunicorn.sock  # we will communicte using this unix socket
+USER=hello                                        # the user to run as
+GROUP=webapps                                     # the group to run as
+NUM_WORKERS=1                                     # how many worker processes should Gunicorn spawn
+DJANGO_SETTINGS_MODULE=mysite.settings            # which settings file should Django use
+DJANGO_WSGI_MODULE=mysite.wsgi                    # WSGI module name
  
 echo "Starting $NAME as `whoami`"
  
@@ -28,5 +28,18 @@ exec ../bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \
   --bind=unix:$SOCKFILE \
-  --log-level=debug \
+  --log-level=info \
   --log-file=-
+
+
+# CONFIG = {
+#   'mode': 'wsgi',
+#   'working_dir': '/var/www/mysite',
+#   'python': '/usr/bin/python',
+#   'args': (
+#       '--bind=127.0.0.1:8002',
+#       '--workers=16',
+#       '--timeout=60',
+#       'mysite.wsgi:application',
+#   ),
+# }
