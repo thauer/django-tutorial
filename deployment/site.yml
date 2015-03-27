@@ -38,7 +38,3 @@
   tags: appserver
   sudo: yes
   roles: [appserver]
-
-- hosts: webserver
-  tasks:
-    - copy: src=../mysite/static dest=/webapps/django-tutorial/
