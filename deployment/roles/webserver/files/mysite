@@ -2,9 +2,9 @@
 
 upstream app_server_djangoapp {
  
-  server unix:/webapps/django-tutorial/run/gunicorn.sock fail_timeout=0;
+  # server unix:/webapps/django-tutorial/run/gunicorn.sock fail_timeout=0;
 
-  # server localhost:8002 fail_timeout=0; 
+  server 10.15.20.82:8002 fail_timeout=0; 
 }
 
 server {

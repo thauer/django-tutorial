@@ -6,13 +6,16 @@
 
 - name: Disable the default host
   file: path=/etc/nginx/sites-enabled/default state=absent
+  register: ngconf1
 
 - name: Copy the host configuration mysite
   copy: src=mysite dest=/etc/nginx/sites-available/
+  register: ngconf2
 
 - name: enable host mysite
   file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
+  register: ngconf3
 
 - name: restart ngingx
   service: name=nginx state=restarted
-  changed_when: False
+  when: ngconf1.changed or ngconf2.changed or ngconf3.changed

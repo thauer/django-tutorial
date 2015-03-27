@@ -3,12 +3,12 @@
 
 # postgres-contrib???
 
-- name: Ensure virtualenv and libpq (linking C) are installed
+- name: Ensure virtualenv and python-dev, libpq-dev which are required by pip
   apt: name={{item}}
   with_items: 
+    - python-virtualenv
     - python-dev
     - libpq-dev
-    - python-virtualenv
 
 - name: Create webapps group
   group: name={{ group }} system=yes
@@ -16,7 +16,7 @@
 - name: Create hello user
   user: name={{ user }} group={{ group }} system=yes shell=/bin/bash home=/webapps
 
-- name: Create the www root directory
+- name: Create the django-tutorial webapp root directory
   sudo_user: "{{ user }}"
   file: path=/webapps/django-tutorial state=directory
 
@@ -35,7 +35,7 @@
     - supervisor
 
 - name: Install gunicorn start script
-  copy: src=files/gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
+  copy: src=gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
   sudo_user: "{{ user }}"
 
 - name: Copy the django project

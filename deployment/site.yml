@@ -17,6 +17,12 @@
   sudo: yes
   roles: [dbserver]
 
+- hosts: appserver
+  tags: dbserver
+  tasks:
+    - name: Test that the appserver can talk to the dbserver
+      wait_for: host=10.15.20.83 port=5432
+
 - hosts: webserver
   tags: webserver
   sudo: yes
@@ -27,3 +33,15 @@
   sudo: yes
   roles: [appserver]
 
+- name: Collecting static files
+  tags: local
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+  - name: django sync static files
+    django_manage: command=collectstatic app_path=../mysite
+#      virtualenv=/webapps/django-tutorial
+
+- hosts: webserver
+  tasks:
+    - copy: src=../mysite/static dest=/webapps/django-tutorial/
