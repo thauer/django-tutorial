@@ -1,0 +1,23 @@
+---
+# file: roles/local/tasks/main.yml
+
+# Prerequisite: virtualenv and python-dev, libpq-dev which are required by pip
+- apt: name={{item}}
+  with_items: 
+    - python-virtualenv
+    - python-dev
+    - libpq-dev
+
+- name: Create the virtualenv
+  command: virtualenv "{{virtualenv}}"
+    creates="{{virtualenv}}/bin/activate"
+
+- name: Install django, psycopg2 and gunicorn
+  pip: virtualenv="{{virtualenv}}" name={{item}}
+  with_items:
+    - django 
+    - psycopg2
+
+- name: django sync static files
+  django_manage: command=collectstatic app_path="{{project_dir}}/mysite"
+    virtualenv="{{virtualenv}}"

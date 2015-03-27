@@ -2,6 +2,12 @@
 # file: site.yml
 # Master playbook
 
+- name: Collecting static files
+  tags: local
+  hosts: 127.0.0.1
+  connection: local
+  roles: [local]
+
 - hosts: all
   tags: all
   sudo: yes    
@@ -32,15 +38,6 @@
   tags: appserver
   sudo: yes
   roles: [appserver]
-
-- name: Collecting static files
-  tags: local
-  hosts: 127.0.0.1
-  connection: local
-  tasks:
-  - name: django sync static files
-    django_manage: command=collectstatic app_path=../mysite
-#      virtualenv=/webapps/django-tutorial
 
 - hosts: webserver
   tasks:

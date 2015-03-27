@@ -4,3 +4,5 @@
 group: webapps
 user: webapps
 webapp: django-tutorial
+project_dir: "{{inventory_dir}}/.."
+virtualenv: "{{project_dir}}/virtualenv"
