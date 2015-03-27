@@ -17,7 +17,7 @@
   register: ngconf3
 
 - name: push the static directory
-  copy: src="{{project_dir}}/mysite/static" dest="/webapps/django-tutorial/"
+  copy: src="{{project_dir}}/static" dest="/webapps/django-tutorial/"
 
 - name: restart ngingx
   service: name=nginx state=restarted
