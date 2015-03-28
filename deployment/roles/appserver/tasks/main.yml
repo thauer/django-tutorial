@@ -1,11 +1,10 @@
 ---
 # file: roles/appserver/tasks/main.yml
 
-# postgres-contrib???
-
-- name: Ensure virtualenv and python-dev, libpq-dev which are required by pip
+- name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
   apt: name={{item}}
   with_items: 
+    - supervisor
     - python-virtualenv
     - python-dev
     - libpq-dev
@@ -13,8 +12,11 @@
 - name: Create webapps group
   group: name={{ group }} system=yes
 
-- name: Create hello user
+- name: Create webapps user
   user: name={{ user }} group={{ group }} system=yes shell=/bin/bash home=/webapps
+
+- name: Add the ssh key
+  authorized_key: user={{user}} key="{{ lookup('file', 'authorized_keys') }}"
 
 - name: Create the django-tutorial webapp root directory
   sudo_user: "{{ user }}"
@@ -39,8 +41,9 @@
   sudo_user: "{{ user }}"
 
 - name: Copy the django project
-  sudo_user: "{{ user }}"
-  copy: src=../mysite dest=/webapps/django-tutorial/
+  sudo: false
+  remote_user: "{{ user }}"
+  synchronize: src=../mysite dest=/webapps/django-tutorial/
 
 - name: django sync database
   sudo_user: "{{ user }}"
