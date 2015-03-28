@@ -36,10 +36,6 @@
     - gunicorn
     - supervisor
 
-- name: Install gunicorn start script
-  copy: src=gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
-  sudo_user: "{{ user }}"
-
 - name: Copy the django project
   sudo: false
   remote_user: "{{ user }}"
@@ -50,7 +46,16 @@
   django_manage: command=syncdb app_path=/webapps/django-tutorial/mysite
     virtualenv=/webapps/django-tutorial
 
-- name: django sync static files
-  django_manage: command=collectstatic app_path=/webapps/django-tutorial/mysite
-    virtualenv=/webapps/django-tutorial
+- name: Install gunicorn start script
+  copy: src=gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
   sudo_user: "{{ user }}"
+
+- name: Create log directory
+  file: path=/webapps/django-tutorial/logs state=directory
+  sudo_user: "{{ user }}"
+
+- name: Install supervisor start script
+  copy: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755
+
+- name: Add supervisor group
+  supervisorctl: name=gunicorn state=present
