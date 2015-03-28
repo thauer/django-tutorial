@@ -2,11 +2,13 @@
 # file: roles/local/tasks/main.yml
 
 # Prerequisite: virtualenv and python-dev, libpq-dev which are required by pip
+# OS X: pip install virtualenv; brew install postgresql
 - apt: name={{item}}
   with_items: 
     - python-virtualenv
     - python-dev
     - libpq-dev
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Create the virtualenv
   command: virtualenv "{{virtualenv}}"
