@@ -6,3 +6,8 @@ user: webapps
 webapp: django-tutorial
 project_dir: "{{inventory_dir}}/.."
 virtualenv: "{{project_dir}}/virtualenv"
+appserver: "10.15.20.82:8002"
+# unix:/webapps/django-tutorial/run/gunicorn.sock
+servername: django-tutorial.hauers.net
+staticpath: /webapps/django-tutorial/static/
+

@@ -5,15 +5,18 @@
   group: name={{ group }} system=yes
 
 - name: Create webapps user
-  user: name={{ user }} group={{ group }} system=yes shell=/bin/bash home=/webapps
+  user: name={{ user }} group={{ group }} system=yes
+    shell=/bin/bash home=/webapps
 
 - name: Add the ssh key
-  authorized_key: user={{user}} key="{{ lookup('file', 'authorized_keys') }}"
+  authorized_key: user={{ user }}
+    key="{{ lookup('file', 'authorized_keys') }}"
 
 - name: push the static directory
   sudo: false
   remote_user: "{{ user }}"
-  synchronize: src="{{project_dir}}/static" dest="/webapps/django-tutorial/"
+  synchronize: src="{{project_dir}}/static" 
+    dest="/webapps/django-tutorial/"
 
 - name: Ensure nginx is installed
   apt: name=nginx
@@ -23,11 +26,12 @@
   register: ngconf1
 
 - name: Copy the host configuration mysite
-  copy: src=mysite dest=/etc/nginx/sites-available/
+  template: src=mysite dest=/etc/nginx/sites-available/
   register: ngconf2
 
 - name: enable host mysite
-  file: path=/etc/nginx/sites-enabled/mysite state=link src=../sites-available/mysite
+  file: path=/etc/nginx/sites-enabled/mysite state=link 
+    src=../sites-available/mysite
   register: ngconf3
 
 - name: restart ngingx

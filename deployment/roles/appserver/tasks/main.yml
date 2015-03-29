@@ -47,7 +47,7 @@
     virtualenv=/webapps/django-tutorial
 
 - name: Install gunicorn start script
-  copy: src=gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
+  template: src=gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
   sudo_user: "{{ user }}"
 
 - name: Create log directory
@@ -55,7 +55,7 @@
   sudo_user: "{{ user }}"
 
 - name: Install supervisor start script
-  copy: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755
+  template: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755
 
 - name: Add supervisor group
   supervisorctl: name=gunicorn state=present

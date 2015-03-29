@@ -1,15 +1,12 @@
 # nginx configuration
 
 upstream app_server_djangoapp {
- 
-  # server unix:/webapps/django-tutorial/run/gunicorn.sock fail_timeout=0;
-
-  server 10.15.20.82:8002 fail_timeout=0; 
+  server {{ appserver }}fail_timeout=0; 
 }
 
 server {
     listen 80;
-    server_name django-tutorial.hauers.net;
+    server_name {{ servername }};
 
     client_max_body_size 4G;
 
@@ -19,13 +16,9 @@ server {
     keepalive_timeout 5;
 
     location /static/ {
-        alias   /webapps/django-tutorial/static/;
+        alias   {{ staticpath }};
     }
     
-    location /media/ {
-        alias   /webapps/django-tutorial/media/;
-    }
- 
     location / {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
@@ -40,6 +33,6 @@ server {
     # Error pages
     error_page 500 502 503 504 /500.html;
     location = /500.html {
-        root /webapps/django-tutorial/static/;
+        root {{ staticpath }};
     }
 }
