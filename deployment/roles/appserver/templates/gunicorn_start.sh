@@ -1,11 +1,11 @@
 #!/bin/bash
  
-NAME="django_tutorial"                               # Name of the application
-DJANGODIR=/webapps/django-tutorial/mysite            # Django project directory
-SOCKFILE=/webapps/django-tutorial/run/gunicorn.sock  # we will communicte using this unix socket
-USER=webapps                                         # the user to run as
-GROUP=webapps                                        # the group to run as
-NUM_WORKERS=1                                        # how many worker processes should Gunicorn spawn
+NAME="django_tutorial"
+DJANGODIR={{ webapp_home }}/django-tutorial/mysite
+SOCKFILE={{ webapp_home }}/django-tutorial/run/gunicorn.sock
+USER={{ webapp_user }}
+GROUP={{ webapp_user }}
+NUM_WORKERS=1
 DJANGO_SETTINGS_MODULE=mysite.settings_production    # which settings file should Django use
 DJANGO_WSGI_MODULE=mysite.wsgi                       # WSGI module name
  

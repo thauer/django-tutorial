@@ -1,22 +1,26 @@
 ---
 # file: roles/webserver/tasks/main.yml
+#
+# Installs nginx with reverse proxy of '/' to {{ appserver }}
+# /static is served from {{ staticpath }}
+# Syncs localhost:{{ static_dir }} to {{ staticpath }}
+# 
 
 - name: Create webapps group
-  group: name={{ group }} system=yes
+  group: name={{ webapp_group }} system=yes
 
 - name: Create webapps user
-  user: name={{ user }} group={{ group }} system=yes
-    shell=/bin/bash home=/webapps
+  user: name={{ webapp_user }} group={{ webapp_group }} system=yes
+    shell=/bin/bash home={{ webapp_home }}
 
 - name: Add the ssh key
-  authorized_key: user={{ user }}
+  authorized_key: user={{ webapp_user }}
     key="{{ lookup('file', 'authorized_keys') }}"
 
 - name: push the static directory
   sudo: false
-  remote_user: "{{ user }}"
-  synchronize: src="{{project_dir}}/static" 
-    dest="/webapps/django-tutorial/"
+  remote_user: "{{ webapp_user }}"
+  synchronize: src="{{ static_dir }}/" dest="{{ staticpath }}"
 
 - name: Ensure nginx is installed
   apt: name=nginx

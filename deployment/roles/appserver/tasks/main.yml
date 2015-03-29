@@ -1,8 +1,12 @@
 ---
 # file: roles/appserver/tasks/main.yml
+#
+# Creates {{ project_home }} owned by {{ webapp_group }}:{{ webapp_user }}
+# Installs in it virtualenv, django, gunicorn. Also installs supervisor
+# Syncs project mysite, hooks up gunicorn and supervisor with settings_production.py
 
 - name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
-  apt: name={{item}}
+  apt: name={{ item }}
   with_items: 
     - supervisor
     - python-virtualenv
@@ -10,26 +14,27 @@
     - libpq-dev
 
 - name: Create webapps group
-  group: name={{ group }} system=yes
+  group: name={{ webapp_group }} system=yes
 
 - name: Create webapps user
-  user: name={{ user }} group={{ group }} system=yes shell=/bin/bash home=/webapps
+  user: name={{ webapp_user }} group={{ webapp_group }} system=yes
+    shell=/bin/bash home={{ webapp_home }}
 
 - name: Add the ssh key
-  authorized_key: user={{user}} key="{{ lookup('file', 'authorized_keys') }}"
+  authorized_key: user={{ webapp_user }} key="{{ lookup('file', 'authorized_keys') }}"
 
-- name: Create the django-tutorial webapp root directory
-  sudo_user: "{{ user }}"
-  file: path=/webapps/django-tutorial state=directory
+- name: Create the webapp project root directory
+  sudo_user: "{{ webapp_user }}"
+  file: path={{ project_home }} state=directory
 
 - name: Create the virtualenv
-  sudo_user: "{{ user }}"
-  command: virtualenv /webapps/django-tutorial
-    creates=/webapps/django-tutorial/bin/activate
+  sudo_user: "{{ webapp_user }}"
+  command: virtualenv {{ project_home }} 
+    creates={{ project_home }}/bin/activate
 
 - name: Install django, psycopg2 and gunicorn
-  sudo_user: "{{ user }}"
-  pip: virtualenv=/webapps/django-tutorial name={{item}}
+  sudo_user: "{{ webapp_user }}"
+  pip: virtualenv={{ project_home }} name={{item}}
   with_items:
     - django 
     - psycopg2
@@ -38,21 +43,27 @@
 
 - name: Copy the django project
   sudo: false
-  remote_user: "{{ user }}"
-  synchronize: src=../mysite dest=/webapps/django-tutorial/
+  remote_user: "{{ webapp_user }}"
+  synchronize: src=../mysite dest={{ project_home }}/ checksum=yes times=no
+
+- name: Copy the production settings
+  sudo_user: "{{ webapp_user }}"
+  template: src=settings_production.py dest={{ project_home }}/mysite/mysite
 
 - name: django sync database
-  sudo_user: "{{ user }}"
-  django_manage: command=syncdb app_path=/webapps/django-tutorial/mysite
-    virtualenv=/webapps/django-tutorial
+  sudo_user: "{{ webapp_user }}"
+  environment:
+    DJANGO_SETTINGS_MODULE: mysite.settings_production
+  django_manage: command=syncdb app_path={{ project_home }}/mysite
+    virtualenv={{ project_home }}
 
 - name: Install gunicorn start script
-  template: src=gunicorn_start.sh dest=/webapps/django-tutorial/bin/ mode=0755
-  sudo_user: "{{ user }}"
+  sudo_user: "{{ webapp_user }}"
+  template: src=gunicorn_start.sh dest={{ project_home }}/bin/ mode=0755
 
 - name: Create log directory
-  file: path=/webapps/django-tutorial/logs state=directory
-  sudo_user: "{{ user }}"
+  sudo_user: "{{ webapp_user }}"
+  file: path={{ project_home }}/logs state=directory
 
 - name: Install supervisor start script
   template: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755

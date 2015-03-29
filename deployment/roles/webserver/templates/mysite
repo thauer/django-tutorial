@@ -1,7 +1,7 @@
 # nginx configuration
 
 upstream app_server_djangoapp {
-  server {{ appserver }}fail_timeout=0; 
+  server {{ appserver }} fail_timeout=0; 
 }
 
 server {

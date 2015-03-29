@@ -6,9 +6,9 @@ except ImportError:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mydatabase',
-        'USER': 'mydatabaseuser',
-        'PASSWORD': 'mypassword',
+        'NAME': '{{ database }}',
+        'USER': '{{ dbuser }}',
+        'PASSWORD': '{{ dbpass }}',
         'HOST': '10.15.20.83',
         'PORT': '5432',
     }
