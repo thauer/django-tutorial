@@ -1,8 +1,8 @@
 #!/bin/bash
  
 NAME="django_tutorial"
-DJANGODIR={{ webapp_home }}/django-tutorial/mysite
-SOCKFILE={{ webapp_home }}/django-tutorial/run/gunicorn.sock
+DJANGODIR={{ project_home }}/mysite
+SOCKFILE={{ project_home }}/run/gunicorn.sock
 USER={{ webapp_user }}
 GROUP={{ webapp_user }}
 NUM_WORKERS=1

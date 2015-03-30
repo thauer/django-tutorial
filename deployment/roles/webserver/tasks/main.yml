@@ -20,7 +20,7 @@
 - name: push the static directory
   sudo: false
   remote_user: "{{ webapp_user }}"
-  synchronize: src="{{ static_dir }}/" dest="{{ staticpath }}"
+  synchronize: src="{{ local.static_dir }}/" dest="{{ staticpath }}"
 
 - name: Ensure nginx is installed
   apt: name=nginx

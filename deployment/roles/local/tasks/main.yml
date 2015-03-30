@@ -13,15 +13,15 @@
   when: ansible_distribution == 'Ubuntu'
 
 - name: Create the virtualenv
-  command: virtualenv "{{ virtualenv }}"
-    creates="{{ virtualenv }}/bin/activate"
+  command: virtualenv "{{ local.virtualenv }}"
+    creates="{{ local.virtualenv }}/bin/activate"
 
 - name: Install django, psycopg2 and gunicorn
-  pip: virtualenv="{{ virtualenv }}" name={{ item }}
+  pip: virtualenv="{{ local.virtualenv }}" name={{ item }}
   with_items:
     - django 
     - psycopg2
 
 - name: django sync static files
-  django_manage: command=collectstatic app_path="{{ project_dir }}/mysite"
-    virtualenv="{{ virtualenv }}"
+  django_manage: command=collectstatic app_path="{{ local.project_dir }}/mysite"
+    virtualenv="{{ local.virtualenv }}"

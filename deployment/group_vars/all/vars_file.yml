@@ -1,18 +1,24 @@
 ---
 # file: group_vars/all/vars_file.yml
 
-postgresql_version: 9.3
-postgresql_intranet: 10.15.20.0/24
-database: mydatabase
-dbuser: mydatabaseuser
-dbpass: mypassword
+local: {
+  project_dir: "{{ inventory_dir }}/..",
+  static_dir: "{{ inventory_dir }}/../static",
+  virtualenv: "{{ inventory_dir }}/../virtualenv"
+}
+
+database: {
+  host: "10.15.20.83",
+  version: "9.3",
+  intranet: "10.15.20.0/24",
+  name: "mydatabase",
+  user: "mydatabaseuser",
+  password: "mypassword"
+}
 webapp_group: webapps
 webapp_user: webapps
 webapp_home: /webapps
 webapp: django-tutorial
-project_dir: "{{inventory_dir}}/.."
-static_dir: "{{project_dir}}/static"
-virtualenv: "{{project_dir}}/virtualenv"
 appserver: "10.15.20.82:8002"
 # unix:/webapps/django-tutorial/run/gunicorn.sock
 servername: django-tutorial.hauers.net
