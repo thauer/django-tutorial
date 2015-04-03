@@ -25,6 +25,9 @@
 - name: Ensure nginx is installed
   apt: name=nginx
 
+- name: Make sure nginx is running
+  service: name=nginx state=started
+
 - name: Disable the default host
   file: path=/etc/nginx/sites-enabled/default state=absent
   register: ngconf1

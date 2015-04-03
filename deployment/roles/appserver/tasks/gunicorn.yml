@@ -13,6 +13,9 @@
     - python-dev
     - libpq-dev
 
+- name: Make sure that supervisor is running
+  service: name=supervisor state=started
+
 - name: Create webapps group
   group: name={{ webapp_group }} system=yes
 
@@ -29,23 +32,22 @@
 
 - name: Create the virtualenv
   sudo_user: "{{ webapp_user }}"
-  command: virtualenv {{ project_home }} 
-    creates={{ project_home }}/bin/activate
+  command: virtualenv {{ webapp.virtualenv }} 
+    creates={{ webapp.virtualenv }}/bin/activate
 
 - name: Install gunicorn
   sudo_user: "{{ webapp_user }}"
-  pip: virtualenv={{ project_home }} name=gunicorn
+  pip: virtualenv={{ webapp.virtualenv }} name=gunicorn
 
 - name: Install gunicorn start script
   sudo_user: "{{ webapp_user }}"
-  template: src=gunicorn_start.sh dest={{ project_home }}/bin/ mode=0755
-
-- name: Create directory for supervisor log
-  sudo_user: "{{ webapp_user }}"
-  file: path={{ project_home }}/logs state=directory
+  template: src=gunicorn_start.sh dest={{ project_home }}/ mode=0755
 
 - name: Install supervisor start script
   template: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755
 
 - name: Add supervisor group
   supervisorctl: name=gunicorn state=present
+
+- name: Make sure that gunicorn is started
+  supervisorctl: name=gunicorn state=started

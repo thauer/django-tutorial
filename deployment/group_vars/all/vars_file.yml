@@ -15,12 +15,17 @@ database: {
   user: "mydatabaseuser",
   password: "mypassword"
 }
+
 webapp_group: webapps
 webapp_user: webapps
 webapp_home: /webapps
-webapp: django-tutorial
+webapp_name: django-tutorial
 appserver: "10.15.20.82:8002"
 # unix:/webapps/django-tutorial/run/gunicorn.sock
 servername: django-tutorial.hauers.net
-project_home: "{{ webapp_home }}/{{ webapp }}"
+project_home: "{{ webapp_home }}/{{ webapp_name }}"
 staticpath: "{{ project_home }}/static/"
+
+webapp: {
+  virtualenv: "{{ project_home }}/virtualenv"
+}

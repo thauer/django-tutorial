@@ -11,6 +11,9 @@
     - postgresql-{{ database.version }}
     - python-psycopg2
 
+- name: Make sure postgresql is running
+  service: name="postgresql" state="started"
+
 - name: Set postgresql to listen on 0.0.0.0/0
   sudo_user: postgres
   lineinfile: dest=/etc/postgresql/{{ database.version }}/main/postgresql.conf
@@ -38,7 +41,7 @@
 - name: Drop database
   sudo_user: postgres
   postgresql_db: name={{ database.name }} state=absent
-  when: False
+#  when: False
 
 - name: Create database
   sudo_user: postgres

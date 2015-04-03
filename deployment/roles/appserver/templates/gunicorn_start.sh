@@ -2,7 +2,7 @@
  
 NAME="django_tutorial"
 DJANGODIR={{ project_home }}/mysite
-SOCKFILE={{ project_home }}/run/gunicorn.sock
+SOCKFILE={{ project_home }}/gunicorn.sock
 USER={{ webapp_user }}
 GROUP={{ webapp_user }}
 NUM_WORKERS=1
@@ -13,7 +13,7 @@ echo "Starting $NAME as `whoami`"
  
 # Activate the virtual environment
 cd $DJANGODIR
-source ../bin/activate
+source {{ webapp.virtualenv }}/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
  
@@ -22,7 +22,7 @@ RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
  
 # Start your Django Unicorn - (do not use --daemon under supervisor)
-exec ../bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+exec {{ webapp.virtualenv }}/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --name $NAME \
   --workers $NUM_WORKERS \
   --user=$USER --group=$GROUP \

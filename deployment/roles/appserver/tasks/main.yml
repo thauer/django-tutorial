@@ -24,16 +24,16 @@
 
 - name: Create the webapp project root directory
   sudo_user: "{{ webapp_user }}"
-  file: path={{ project_home }} state=directory
+  file: path={{ webapp.virtualenv }} state=directory
 
 - name: Create the virtualenv
   sudo_user: "{{ webapp_user }}"
-  command: virtualenv {{ project_home }} 
-    creates={{ project_home }}/bin/activate
+  command: virtualenv {{ webapp.virtualenv }} 
+    creates={{ webapp.virtualenv }}/bin/activate
 
 - name: Install django and psycopg2
   sudo_user: "{{ webapp_user }}"
-  pip: virtualenv={{ project_home }} name={{item}}
+  pip: virtualenv={{ webapp.virtualenv }} name={{item}}
   with_items:
     - django 
     - psycopg2
@@ -54,11 +54,20 @@
   sudo_user: "{{ webapp_user }}"
   template: src=settings_production.py dest={{ project_home }}/mysite/mysite
 
-- name: django sync database
+- name: django migrate database
   sudo_user: "{{ webapp_user }}"
   environment:
     DJANGO_SETTINGS_MODULE: mysite.settings_production
-  django_manage: command=syncdb app_path={{ project_home }}/mysite
-    virtualenv={{ project_home }}
+  django_manage: command=migrate app_path={{ project_home }}/mysite
+    virtualenv={{ webapp.virtualenv }}
+
+- template: src=dbbootstrap.json dest=/tmp
+
+- name: django initial fixture
+  sudo_user: "{{ webapp_user }}"
+  environment:
+    DJANGO_SETTINGS_MODULE: mysite.settings_production
+  django_manage: command="loaddata /tmp/dbbootstrap.json" app_path={{ project_home }}/mysite
+    virtualenv={{ webapp.virtualenv }}
 
 - include: "gunicorn.yml"
