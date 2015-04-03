@@ -35,6 +35,11 @@
   postgresql_user: name={{ database.user }} password={{ database.password }}
     role_attr_flags=NOSUPERUSER,NOCREATEDB,NOCREATEROLE
 
+- name: Drop database
+  sudo_user: postgres
+  postgresql_db: name={{ database.name }} state=absent
+  when: False
+
 - name: Create database
   sudo_user: postgres
   postgresql_db: name={{ database.name }} owner={{ database.user }}

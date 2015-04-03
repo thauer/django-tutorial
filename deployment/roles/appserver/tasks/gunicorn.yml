@@ -1,5 +1,5 @@
 ---
-# file: roles/appserver/tasks/main.yml
+# file: roles/appserver/tasks/gunicorn.yml
 #
 # Creates {{ project_home }} owned by {{ webapp_group }}:{{ webapp_user }}
 # Installs in it virtualenv, django, gunicorn. Also installs supervisor
@@ -8,6 +8,7 @@
 - name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
   apt: name={{ item }}
   with_items: 
+    - supervisor
     - python-virtualenv
     - python-dev
     - libpq-dev
@@ -31,34 +32,20 @@
   command: virtualenv {{ project_home }} 
     creates={{ project_home }}/bin/activate
 
-- name: Install django and psycopg2
+- name: Install gunicorn
   sudo_user: "{{ webapp_user }}"
-  pip: virtualenv={{ project_home }} name={{item}}
-  with_items:
-    - django 
-    - psycopg2
+  pip: virtualenv={{ project_home }} name=gunicorn
 
-- name: trick me
-  sudo: false
-  remote_user: "{{ webapp_user }}"
-  synchronize: src=../mysite/mysite dest={{ project_home }}/mysite recursive=no 
-  changed_when: false
-
-- name: Copy the django project
-  sudo: false
-  remote_user: "{{ webapp_user }}"
-  synchronize: src=../mysite dest={{ project_home }}/ 
-  # checksum=yes times=no
-
-- name: Copy the production settings
+- name: Install gunicorn start script
   sudo_user: "{{ webapp_user }}"
-  template: src=settings_production.py dest={{ project_home }}/mysite/mysite
+  template: src=gunicorn_start.sh dest={{ project_home }}/bin/ mode=0755
 
-- name: django sync database
+- name: Create directory for supervisor log
   sudo_user: "{{ webapp_user }}"
-  environment:
-    DJANGO_SETTINGS_MODULE: mysite.settings_production
-  django_manage: command=syncdb app_path={{ project_home }}/mysite
-    virtualenv={{ project_home }}
+  file: path={{ project_home }}/logs state=directory
 
-- include: "gunicorn.yml"
+- name: Install supervisor start script
+  template: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755
+
+- name: Add supervisor group
+  supervisorctl: name=gunicorn state=present
