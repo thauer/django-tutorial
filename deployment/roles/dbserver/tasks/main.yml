@@ -3,7 +3,8 @@
 #
 # Installs {{ database.version }} connectable from {{ database.intranet }}
 # Creates {{ database.name }} with {{ database.user }} and {{ database.password }}
-
+#
+# To drop and recreate the db: -e "dropdb=True"
 
 - name: Ensure postgresql is installed
   apt: name={{item}}
@@ -41,7 +42,7 @@
 - name: Drop database
   sudo_user: postgres
   postgresql_db: name={{ database.name }} state=absent
-#  when: False
+  when: "{{dropdb|default(False)}}"
 
 - name: Create database
   sudo_user: postgres
