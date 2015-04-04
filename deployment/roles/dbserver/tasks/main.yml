@@ -42,7 +42,7 @@
 - name: Drop database
   sudo_user: postgres
   postgresql_db: name={{ database.name }} state=absent
-  when: "{{dropdb|default(False)}}"
+  when: dropdb|default(False)
 
 - name: Create database
   sudo_user: postgres
