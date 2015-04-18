@@ -14,8 +14,12 @@
     shell=/bin/bash home={{ webapp_home }}
 
 - name: Add the ssh key
-  authorized_key: user={{ webapp_user }}
+  authorized_key: user="{{ webapp_user }}"
     key="{{ lookup('file', 'authorized_keys') }}"
+
+- name: Create the static directory
+  sudo_user: "{{ webapp_user }}"
+  file: path="{{ staticpath }}" state=directory
 
 - name: push the static directory
   sudo: false

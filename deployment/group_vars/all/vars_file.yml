@@ -8,7 +8,7 @@ local: {
 }
 
 database: {
-  host: "10.15.20.83",
+  host: "{{ hostvars[groups['dbserver'][0]]['ansible_fqdn'] }}",
   version: "9.3",
   intranet: "10.15.20.0/24",
   name: "mydatabase",
@@ -20,7 +20,7 @@ webapp_group: webapps
 webapp_user: webapps
 webapp_home: /webapps
 webapp_name: django-tutorial
-appserver: "10.15.20.82:8002"
+appserver: "{{ hostvars[groups['appserver'][0]]['ansible_fqdn'] }}:8002"
 # unix:/webapps/django-tutorial/run/gunicorn.sock
 servername: django-tutorial.hauers.net
 project_home: "{{ webapp_home }}/{{ webapp_name }}"
