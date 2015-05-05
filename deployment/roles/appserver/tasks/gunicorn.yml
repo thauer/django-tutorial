@@ -50,4 +50,4 @@
   supervisorctl: name=gunicorn state=present
 
 - name: Make sure that gunicorn is started
-  supervisorctl: name=gunicorn state=started
+  supervisorctl: name=gunicorn state=restarted
