@@ -3,12 +3,13 @@
 
 local: {
   project_dir: "{{ inventory_dir }}/..",
-  static_dir: "{{ inventory_dir }}/../static",
+  static_dir: "{{ inventory_dir }}/../mysite/static",
   virtualenv: "{{ inventory_dir }}/../virtualenv"
 }
 
 database: {
   host: "{{ hostvars[groups['dbserver'][0]]['ansible_fqdn'] }}",
+  port: "5432",
   version: "9.3",
   intranet: "10.15.20.0/24",
   name: "mydatabase",
