@@ -6,11 +6,11 @@ Contents:
 
 * [virtualenv](virtualenv): For sanity, we use virtualenv. (It is automatically installed by ansible on ubuntu 15.04)
 * [mysite](mysite): This is the application which gets created during the tutorial
-* [deployment](deployment): This folder contains an [ansible](http://docs.ansible.com) playbook which deploys the tutorial application in an nginx-gunicorn-postgresql environment. It also auto-deploys the local [virtualenv](virtualenv).
+* [deployment](deployment): This folder __contains__ an [ansible](http://docs.ansible.com) playbook which deploys the tutorial application in an nginx-gunicorn-postgresql environment. It also auto-deploys the local [virtualenv](virtualenv).
 
 ## Production environment
 
-The [deployment](deployment) directory encodes the installation of the tutorial application into a server environment with the following components:
+The [deployment](deployment) directory contains the installation of the tutorial application into a server environment with the following components:
 
 * webserver running nginx
     - listens on port 80
