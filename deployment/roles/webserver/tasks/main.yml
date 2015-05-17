@@ -13,38 +13,38 @@
   user: name={{ webapp_user }} group={{ webapp_group }} system=yes
     shell=/bin/bash home={{ webapp_home }}
 
-- name: Adds the ssh key
+- name: Pushes the ssh public key
   authorized_key: user="{{ webapp_user }}"
     key="{{ lookup('file', 'authorized_keys') }}"
 
-- name: Create the static directory
+- name: Creates the static directory
   sudo_user: "{{ webapp_user }}"
   file: path="{{ staticpath }}" state=directory
 
-- name: push the static directory
+- name: Copies the content of the static directory
   sudo: false
   remote_user: "{{ webapp_user }}"
   synchronize: src="{{ local.static_dir }}/" dest="{{ staticpath }}"
 
-- name: Ensure nginx is installed
+- name: Ensures nginx is installed
   apt: name=nginx
 
-- name: Make sure nginx is running
+- name: Ensures sure nginx is running
   service: name=nginx state=started
 
-- name: Disable the default host
+- name: Disables the default host
   file: path=/etc/nginx/sites-enabled/default state=absent
   register: ngconf1
 
-- name: Copy the host configuration mysite
+- name: Copies the host configuration 'mysite'
   template: src=mysite dest=/etc/nginx/sites-available/
   register: ngconf2
 
-- name: enable host mysite
+- name: Enables the virtual host 'mysite'
   file: path=/etc/nginx/sites-enabled/mysite state=link 
     src=../sites-available/mysite
   register: ngconf3
 
-- name: restart ngingx
+- name: Restarts ngingx
   service: name=nginx state=restarted
   when: ngconf1.changed or ngconf2.changed or ngconf3.changed

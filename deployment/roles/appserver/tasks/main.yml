@@ -5,7 +5,7 @@
 # Installs in it virtualenv, django, gunicorn. Also installs supervisor
 # Syncs project mysite, hooks up gunicorn and supervisor with settings_production.py
 
-- name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
+- name: Installs supervisor, virtualenv and python-dev, libpq-dev as required by pip
   apt: name={{ item }}
   with_items: 
     - python-virtualenv

@@ -5,23 +5,24 @@
 
 # Prerequisite: virtualenv and python-dev, libpq-dev which are required by pip
 # OS X: pip install virtualenv; brew install postgresql
-- apt: name={{ item }}
+- name: Ensures that python-virtualenv, pythond-dev and libpq-dev are installed
+  apt: name={{ item }}
   with_items: 
     - python-virtualenv
     - python-dev
     - libpq-dev
   when: ansible_distribution == 'Ubuntu'
 
-- name: Create the virtualenv
+- name: Creates the local virtualenv
   command: virtualenv "{{ local.virtualenv }}"
     creates="{{ local.virtualenv }}/bin/activate"
 
-- name: Install django, psycopg2 and gunicorn
+- name: Installs django and psycopg2 locally
   pip: virtualenv="{{ local.virtualenv }}" name={{ item }}
   with_items:
     - django 
     - psycopg2
 
-- name: django sync static files
+- name: django sync static files to prepare for webserver
   django_manage: command=collectstatic app_path="{{ local.project_dir }}/mysite"
     virtualenv="{{ local.virtualenv }}"

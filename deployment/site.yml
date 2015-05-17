@@ -12,10 +12,10 @@
   tags: all
   sudo: yes    
   tasks: 
-  - name: Update APT package cache
+  - name: Updates the apt package cache
     apt: update_cache=yes cache_valid_time=3600
 
-  - name: Upgrade packages
+  - name: Upgrades all packages
     apt: upgrade=dist
 
 - hosts: dbserver
@@ -26,7 +26,7 @@
 - hosts: appserver
   tags: dbserver
   tasks:
-    - name: Test that the appserver can talk to the dbserver
+    - name: Tests that the appserver can talk to the dbserver
       wait_for: host="{{ database.host }}" port="{{ database.port }}"
 
 - hosts: webserver
