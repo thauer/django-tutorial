@@ -4,7 +4,7 @@ I created this project as a log of following the [Django tutorial](https://docs.
 
 Contents:
 
-* [deployment](deployment): This folder __contains__ an [ansible](http://docs.ansible.com) playbook which deploys the tutorial application in an nginx-gunicorn-postgresql environment. It also auto-deploys the local virtualenv.
+* [deployment](deployment): This folder contains an [ansible](http://docs.ansible.com) playbook which deploys the tutorial application in an nginx-gunicorn-postgresql environment. It also auto-deploys the local virtualenv.
 * `virtualenv`: For sanity, we use virtualenv. (.gitignored, it is automatically installed by ansible on ubuntu 15.04)
 * `mysite`: This is the application which gets created during the tutorial (.gitignored)
 
