@@ -4,9 +4,9 @@ I created this project as a log of following the [Django tutorial](https://docs.
 
 Contents:
 
-* [virtualenv](virtualenv): For sanity, we use virtualenv. (It is automatically installed by ansible on ubuntu 15.04)
-* [mysite](mysite): This is the application which gets created during the tutorial
-* [deployment](deployment): This folder __contains__ an [ansible](http://docs.ansible.com) playbook which deploys the tutorial application in an nginx-gunicorn-postgresql environment. It also auto-deploys the local [virtualenv](virtualenv).
+* [deployment](deployment): This folder __contains__ an [ansible](http://docs.ansible.com) playbook which deploys the tutorial application in an nginx-gunicorn-postgresql environment. It also auto-deploys the local virtualenv.
+* `virtualenv`: For sanity, we use virtualenv. (.gitignored, it is automatically installed by ansible on ubuntu 15.04)
+* `mysite`: This is the application which gets created during the tutorial (.gitignored)
 
 ## Production environment
 
@@ -17,6 +17,7 @@ The [deployment](deployment) directory contains the installation of the tutorial
     - serves static content from local directory, `/webapps/mysite/static`
     - proxies everything else to appserver, port 8002
 * dbserver running postgresql
+    - version 9.3 hardcoded
     - listens on port 5432 to the local intranet (10.15.20.0/24)
     - database `mydatabase`, accessible to `mydatabaseuser:mypassword`
 * appserver
@@ -51,6 +52,6 @@ Create the project, migrate the database and run the server:
 
 ### Production environment
 
-Deploy the project in the production environment (use `-e "dropdb=True"` to force drop the database):
+Deploy the project in the production environment (use `-e "dropdb=True"` to force-drop the database):
 
     tutorial/deployment$ ansible-playbook -i hosts site.yml
