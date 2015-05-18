@@ -1,4 +1,4 @@
-# django-tutoriral
+# django-tutorial
 
 I created this project as a log of following the [Django tutorial](https://docs.djangoproject.com/en/1.8/) at the Django project website. I worked with version 1.8. 
 
