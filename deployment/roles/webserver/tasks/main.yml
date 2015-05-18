@@ -6,6 +6,17 @@
 # Syncs localhost:{{ static_dir }} to {{ staticpath }}
 # 
 
+- name: Patches settings.py to define the local static directory
+  sudo: false
+  local_action: lineinfile dest="{{ local.project_dir }}/mysite/mysite/settings.py"
+    regexp='^STATIC_ROOT'
+    line="STATIC_ROOT = '{{ local.static_dir }}'"
+
+- name: Collects the static files locally from the django application
+  sudo: false
+  local_action: django_manage command=collectstatic
+    app_path="{{ local.project_dir }}/mysite" virtualenv="{{ local.virtualenv }}"
+
 - name: Creates webapps group
   group: name={{ webapp_group }} system=yes
 

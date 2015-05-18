@@ -38,19 +38,19 @@
     - django 
     - psycopg2
 
-- name: trick me
+- name: Creates the mysite directory (this is to fool rsync)
   sudo: false
   remote_user: "{{ webapp_user }}"
   synchronize: src=../mysite/mysite dest={{ project_home }}/mysite recursive=no 
   changed_when: false
 
-- name: Copy the django project
+- name: Copies the django project
   sudo: false
   remote_user: "{{ webapp_user }}"
   synchronize: src=../mysite dest={{ project_home }}/ 
   # checksum=yes times=no
 
-- name: Copy the production settings
+- name: Copies the production settings
   sudo_user: "{{ webapp_user }}"
   template: src=settings_production.py dest={{ project_home }}/mysite/mysite
 
@@ -61,9 +61,10 @@
   django_manage: command=migrate app_path={{ project_home }}/mysite
     virtualenv={{ webapp.virtualenv }}
 
-- template: src=dbbootstrap.json dest=/tmp
+- name: Copies the database fixture json file
+  template: src=dbbootstrap.json dest=/tmp
 
-- name: django initial fixture
+- name: Applies the initial fixture to the database
   sudo_user: "{{ webapp_user }}"
   environment:
     DJANGO_SETTINGS_MODULE: mysite.settings_production

@@ -1,6 +1,7 @@
 virtualbox
 virtualenv
 README.html
+/mysite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -4,7 +4,7 @@
 local: {
   project_dir: "{{ inventory_dir }}/..",
   virtualenv: "{{ inventory_dir }}/../virtualenv",
-  static_dir: "{{ inventory_dir }}/../mysite/static"
+  static_dir: "/tmp/static"
 }
 
 database: {
@@ -22,7 +22,6 @@ webapp_user: webapps
 webapp_home: /webapps
 webapp_name: django-tutorial
 appserver: "{{ hostvars[groups['appserver'][0]]['ansible_fqdn'] }}:8002"
-# unix:/webapps/django-tutorial/run/gunicorn.sock
 servername: django-tutorial.hauers.net
 project_home: "{{ webapp_home }}/{{ webapp_name }}"
 staticpath: "{{ project_home }}/static/"

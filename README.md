@@ -23,3 +23,34 @@ The [deployment](deployment) directory contains the installation of the tutorial
     - runs supervisord to supervise gunicorn
     - runs gunicorn
     - contains django app within gunicorn
+
+## Tutorial
+
+### Development environment
+
+Set up the local environment and verify django version:
+
+    tutorial/deployment$ ansible-playbook -i hosts site.yml --tags local
+    tutorial$ . virtualenv/bin/activate
+    tutorial$ python -c "import django; print(django.get_version())"
+    1.8
+
+Create the project, migrate the database and run the server:
+
+    tutorial$ django-admin startproject mysite
+    tutorial$ cd mysite
+    tutorial/mysite$ python manage.py migrate
+    tutorial/mysite$ python manage.py runserver
+    Performing system checks...
+
+    System check identified no issues (0 silenced).
+    May 18, 2015 - 11:17:04
+    Django version 1.8, using settings 'mysite.settings'
+    Starting development server at http://127.0.0.1:8000/
+    Quit the server with CONTROL-C.
+
+### Production environment
+
+Deploy the project in the production environment (use `-e "dropdb=True"` to force drop the database):
+
+    tutorial/deployment$ ansible-playbook -i hosts site.yml
