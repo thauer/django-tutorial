@@ -3,8 +3,8 @@
 
 local: {
   project_dir: "{{ inventory_dir }}/..",
-  static_dir: "{{ inventory_dir }}/../mysite/static",
-  virtualenv: "{{ inventory_dir }}/../virtualenv"
+  virtualenv: "{{ inventory_dir }}/../virtualenv",
+  static_dir: "{{ inventory_dir }}/../mysite/static"
 }
 
 database: {
