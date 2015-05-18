@@ -22,7 +22,3 @@
   with_items:
     - django 
     - psycopg2
-
-- name: django sync static files to prepare for webserver
-  django_manage: command=collectstatic app_path="{{ local.project_dir }}/mysite"
-    virtualenv="{{ local.virtualenv }}"
