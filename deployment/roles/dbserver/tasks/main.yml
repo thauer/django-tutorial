@@ -24,7 +24,7 @@
 - name: Allows access from the intranet (specified by variable database.intranet)
   sudo_user: postgres
   lineinfile: dest=/etc/postgresql/{{ database.version }}/main/pg_hba.conf
-    line="host all all {{ database.intranet }} md5" insertafter="EOF"
+    line="host all all {{ dbclient_address }} md5" insertafter="EOF"
   register: pgconf2
 
 - name: Restarts postgresql

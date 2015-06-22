@@ -1,17 +1,19 @@
 ---
 # file: group_vars/all/vars_file.yml
 
+webapp_name: django-tutorial
+
 local: {
   project_dir: "{{ inventory_dir }}/..",
   virtualenv: "{{ inventory_dir }}/../virtualenv",
-  static_dir: "/tmp/static"
+  static_dir: "/tmp/static",
+  webapp_root: "{{ inventory_dir }}/../{{ webapp_name }}"
 }
 
 database: {
   host: "{{ hostvars[groups['dbserver'][0]]['ansible_fqdn'] }}",
   port: "5432",
   version: "9.3",
-  intranet: "10.15.20.0/24",
   name: "mydatabase",
   user: "mydatabaseuser",
   password: "mypassword"
@@ -21,7 +23,6 @@ database: {
 webapp_group: webapps
 webapp_user: webapps
 webapp_home: /webapps
-webapp_name: django-tutorial
 appserver: "{{ hostvars[groups['appserver'][0]]['ansible_fqdn'] }}:8002"
 servername: django-tutorial.hauers.net
 project_home: "{{ webapp_home }}/{{ webapp_name }}"
@@ -31,6 +32,6 @@ webapp: {
   group: webapps,
   user: webapps,
   home: /webapps,
-  virtualenv: /webapps/virtualenv
-  root: /webapps/django-tutorial
+  virtualenv: /webapps/virtualenv,
+  root: "/webapps/{{ webapp_name }}"
 }

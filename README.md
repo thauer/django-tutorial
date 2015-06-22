@@ -64,6 +64,15 @@ The above generates the following project layout:
 
 ### Production environment
 
+#### Database
+
+* `dbserver` with `dbclient_address` defined in the inventory
+* variables `database.{host, port, version, name, user, password}` defined in `group_vars/all/var_file.yml`
+
+#### App server
+
+* Creates `webapp.{group, user, home, virtualenv}`
+
 Deploy the project in the production environment (use `-e "dropdb=True"` to force-drop the database):
 
     tutorial/deployment$ ansible-playbook -i hosts site.yml

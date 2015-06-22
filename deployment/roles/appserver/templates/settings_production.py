@@ -10,6 +10,6 @@ DATABASES = {
         'USER': '{{ database.user }}',
         'PASSWORD': '{{ database.password }}',
         'HOST': '{{ database.host }}',
-        'PORT': '5432',
+        'PORT': '{{ database.port }}',
     }
 }
