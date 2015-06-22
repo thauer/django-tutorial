@@ -1,10 +1,10 @@
 #!/bin/bash
  
-NAME="django_tutorial"
-DJANGODIR={{ project_home }}/mysite
-SOCKFILE={{ project_home }}/gunicorn.sock
-USER={{ webapp_user }}
-GROUP={{ webapp_user }}
+NAME="django-tutorial"
+DJANGODIR={{ webapp.root }}
+SOCKFILE={{ webapp.root }}/gunicorn.sock
+USER={{ webapp.user }}
+GROUP={{ webapp.group }}
 NUM_WORKERS=1
 DJANGO_SETTINGS_MODULE=mysite.settings_production    # which settings file should Django use
 DJANGO_WSGI_MODULE=mysite.wsgi                       # WSGI module name

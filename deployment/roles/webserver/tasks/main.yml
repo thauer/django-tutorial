@@ -8,34 +8,34 @@
 
 - name: Patches settings.py to define the local static directory
   sudo: false
-  local_action: lineinfile dest="{{ local.project_dir }}/mysite/mysite/settings.py"
+  local_action: lineinfile dest="{{ local.project_dir }}/django-tutorial/mysite/settings.py"
     regexp='^STATIC_ROOT'
     line="STATIC_ROOT = '{{ local.static_dir }}'"
 
 - name: Collects the static files locally from the django application
   sudo: false
   local_action: django_manage command=collectstatic
-    app_path="{{ local.project_dir }}/mysite" virtualenv="{{ local.virtualenv }}"
+    app_path="{{ local.project_dir }}/django-tutorial" virtualenv="{{ local.virtualenv }}"
 
 - name: Creates webapps group
-  group: name={{ webapp_group }} system=yes
+  group: name={{ webapp.group }} system=yes
 
 - name: Creates webapps user
-  user: name={{ webapp_user }} group={{ webapp_group }} system=yes
-    shell=/bin/bash home={{ webapp_home }}
+  user: name={{ webapp.user }} group={{ webapp.group }} system=yes
+    shell=/bin/bash home={{ webapp.home }}
 
 - name: Pushes the ssh public key
-  authorized_key: user="{{ webapp_user }}"
+  authorized_key: user="{{ webapp.user }}"
     key="{{ lookup('file', 'authorized_keys') }}"
 
 - name: Creates the static directory
-  sudo_user: "{{ webapp_user }}"
-  file: path="{{ staticpath }}" state=directory
+  sudo_user: "{{ webapp.user }}"
+  file: path="{{ webapp.root }}/static" state=directory
 
 - name: Copies the content of the static directory
   sudo: false
-  remote_user: "{{ webapp_user }}"
-  synchronize: src="{{ local.static_dir }}/" dest="{{ staticpath }}"
+  remote_user: "{{ webapp.user }}"
+  synchronize: src="{{ local.static_dir }}/" dest="{{ webapp.root }}/static"
 
 - name: Ensures nginx is installed
   apt: name=nginx

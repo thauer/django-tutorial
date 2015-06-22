@@ -33,6 +33,6 @@ server {
     # Error pages
     error_page 500 502 503 504 /500.html;
     location = /500.html {
-        root {{ staticpath }};
+        root {{ webapp.root }}/static;
     }
 }

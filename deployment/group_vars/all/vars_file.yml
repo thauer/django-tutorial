@@ -17,6 +17,7 @@ database: {
   password: "mypassword"
 }
 
+
 webapp_group: webapps
 webapp_user: webapps
 webapp_home: /webapps
@@ -27,5 +28,9 @@ project_home: "{{ webapp_home }}/{{ webapp_name }}"
 staticpath: "{{ project_home }}/static/"
 
 webapp: {
-  virtualenv: "{{ project_home }}/virtualenv"
+  group: webapps,
+  user: webapps,
+  home: /webapps,
+  virtualenv: /webapps/virtualenv
+  root: /webapps/django-tutorial
 }

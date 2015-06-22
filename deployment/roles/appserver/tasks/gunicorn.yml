@@ -16,32 +16,13 @@
 - name: Make sure that supervisor is running
   service: name=supervisor state=started
 
-- name: Create webapps group
-  group: name={{ webapp_group }} system=yes
-
-- name: Create webapps user
-  user: name={{ webapp_user }} group={{ webapp_group }} system=yes
-    shell=/bin/bash home={{ webapp_home }}
-
-- name: Add the ssh key
-  authorized_key: user={{ webapp_user }} key="{{ lookup('file', 'authorized_keys') }}"
-
-- name: Create the webapp project root directory
-  sudo_user: "{{ webapp_user }}"
-  file: path={{ project_home }} state=directory
-
-- name: Create the virtualenv
-  sudo_user: "{{ webapp_user }}"
-  command: virtualenv {{ webapp.virtualenv }} 
-    creates={{ webapp.virtualenv }}/bin/activate
-
 - name: Install gunicorn
-  sudo_user: "{{ webapp_user }}"
+  sudo_user: "{{ webapp.user }}"
   pip: virtualenv={{ webapp.virtualenv }} name=gunicorn
 
 - name: Install gunicorn start script
-  sudo_user: "{{ webapp_user }}"
-  template: src=gunicorn_start.sh dest={{ project_home }}/ mode=0755
+  sudo_user: "{{ webapp.user }}"
+  template: src=gunicorn_start.sh dest={{ webapp.root }} mode=0755
 
 - name: Install supervisor start script
   template: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755
@@ -50,4 +31,4 @@
   supervisorctl: name=gunicorn state=present
 
 - name: Make sure that gunicorn is started
-  supervisorctl: name=gunicorn state=restarted
+  supervisorctl: name=gunicorn state=started

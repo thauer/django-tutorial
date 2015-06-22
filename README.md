@@ -38,8 +38,9 @@ Set up the local environment and verify django version:
 
 Create the project, migrate the database and run the server:
 
-    tutorial$ django-admin startproject mysite
-    tutorial$ cd mysite
+    tutorial$ mkdir django-tutorial
+    tutorial$ django-admin startproject mysite django-tutorial
+    tutorial$ cd django-tutorial
     tutorial/mysite$ python manage.py migrate
     tutorial/mysite$ python manage.py runserver
     Performing system checks...
@@ -50,8 +51,27 @@ Create the project, migrate the database and run the server:
     Starting development server at http://127.0.0.1:8000/
     Quit the server with CONTROL-C.
 
+The above generates the following project layout:
+
+    django-tutorial/
+    ├── db.sqlite3
+    ├── manage.py
+    └── mysite
+        ├── __init__.py
+        ├── settings.py
+        ├── urls.py
+        └── wsgi.py
+
 ### Production environment
 
 Deploy the project in the production environment (use `-e "dropdb=True"` to force-drop the database):
 
     tutorial/deployment$ ansible-playbook -i hosts site.yml
+
+The production environment:
+
+appserver:
+
+
+
+
