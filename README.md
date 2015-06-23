@@ -72,6 +72,29 @@ The above generates the following project layout:
 #### App server
 
 * Creates `webapp.{group, user, home, virtualenv}`
+* Layout:
+
+        /webapps/django-tutorial/
+        ├── db.sqlite3
+        ├── manage.py
+        ├── mysite
+        │   ├── __init__.py
+        │   ├── settings_production.py
+        │   ├── settings.py
+        │   ├── urls.py
+        │   └── wsgi.py
+        └── static
+            └── admin
+                ├── css
+                │   ├── [...]
+                │   └── widgets.css
+                ├── img
+                │   ├── [...]
+                │   └── tooltag-arrowright.png
+                └── js
+                    ├── [...]
+                    └── urlify.js
+
 
 Deploy the project in the production environment (use `-e "dropdb=True"` to force-drop the database):
 
