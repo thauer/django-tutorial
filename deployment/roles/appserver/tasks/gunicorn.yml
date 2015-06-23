@@ -1,20 +1,7 @@
 ---
 # file: roles/appserver/tasks/gunicorn.yml
 #
-# Creates {{ project_home }} owned by {{ webapp_group }}:{{ webapp_user }}
-# Installs in it virtualenv, django, gunicorn. Also installs supervisor
-# Syncs project mysite, hooks up gunicorn and supervisor with settings_production.py
-
-- name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
-  apt: name={{ item }}
-  with_items: 
-    - supervisor
-    - python-virtualenv
-    - python-dev
-    - libpq-dev
-
-- name: Make sure that supervisor is running
-  service: name=supervisor state=started
+# Installs gunicorn and supervisor
 
 - name: Install gunicorn
   sudo_user: "{{ webapp.user }}"
@@ -23,6 +10,14 @@
 - name: Install gunicorn start script
   sudo_user: "{{ webapp.user }}"
   template: src=gunicorn_start.sh dest={{ webapp.root }} mode=0755
+
+- name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
+  apt: name={{ item }}
+  with_items: 
+    - supervisor
+
+- name: Make sure that supervisor is running
+  service: name=supervisor state=started
 
 - name: Install supervisor start script
   template: src=gunicorn.conf dest=/etc/supervisor/conf.d/ mode=0755

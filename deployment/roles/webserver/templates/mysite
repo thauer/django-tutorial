@@ -16,7 +16,7 @@ server {
     keepalive_timeout 5;
 
     location /static/ {
-        alias   {{ staticpath }};
+        alias   {{ webapp.root }}/static;
     }
     
     location / {

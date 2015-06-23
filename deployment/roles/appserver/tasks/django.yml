@@ -1,7 +1,7 @@
 ---
 # file: roles/appserver/tasks/django.yml
 #
-# Syncs project, settings_production.py
+# Syncs webapp to {{ webapp.home }}, creating {{ webapp.root }}, settings_production.py
 
 
 # - name: Creates the mysite directory (this is to fool rsync)
@@ -17,26 +17,22 @@
   # checksum=yes times=no
 
 - name: Copies the production settings
-  sudo: false
-  remote_user: "{{ webapp.user }}"
+  sudo_user: "{{ webapp.user }}"
   template: src=settings_production.py dest={{ webapp.root }}/mysite
 
 - name: django migrate database
-  sudo: false
-  remote_user: "{{ webapp.user }}"
+  sudo_user: "{{ webapp.user }}"
   environment:
     DJANGO_SETTINGS_MODULE: mysite.settings_production
   django_manage: command=migrate app_path={{ webapp.root }}
     virtualenv={{ webapp.virtualenv }}
 
 - name: Copies the database fixture json file
-  sudo: false
-  remote_user: "{{ webapp.user }}"
+  sudo_user: "{{ webapp.user }}"
   template: src=dbbootstrap.json dest=/tmp
 
 - name: Applies the initial fixture to the database
-  sudo: false
-  remote_user: "{{ webapp.user }}"
+  sudo_user: "{{ webapp.user }}"
   environment:
     DJANGO_SETTINGS_MODULE: mysite.settings_production
   django_manage: command="loaddata /tmp/dbbootstrap.json" app_path={{ webapp.root }}
