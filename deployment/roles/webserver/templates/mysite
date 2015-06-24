@@ -1,7 +1,7 @@
 # nginx configuration
 
 upstream app_server_djangoapp {
-  server {{ appserver }} fail_timeout=0; 
+  server {{ webapp.host }}:{{ webapp.port }} fail_timeout=0; 
 }
 
 server {
@@ -16,7 +16,7 @@ server {
     keepalive_timeout 5;
 
     location /static/ {
-        alias   {{ webapp.root }}/static;
+        alias   {{ webapp.root }}/static/;
     }
     
     location / {

@@ -34,4 +34,4 @@
     - psycopg2
 
 - include: "django.yml"
-# - include: "gunicorn.yml"
+- include: "gunicorn.yml"

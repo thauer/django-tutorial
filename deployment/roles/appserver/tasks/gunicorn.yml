@@ -11,7 +11,7 @@
   sudo_user: "{{ webapp.user }}"
   template: src=gunicorn_start.sh dest={{ webapp.root }} mode=0755
 
-- name: Install supervisor, virtualenv and python-dev, libpq-dev as required by pip
+- name: Install supervisor
   apt: name={{ item }}
   with_items: 
     - supervisor

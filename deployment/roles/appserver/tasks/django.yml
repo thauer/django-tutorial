@@ -4,12 +4,6 @@
 # Syncs webapp to {{ webapp.home }}, creating {{ webapp.root }}, settings_production.py
 
 
-# - name: Creates the mysite directory (this is to fool rsync)
-#   sudo: false
-#   remote_user: "{{ webapp.user }}"
-#   synchronize: src=../django-tutorial/mysite dest={{ webapp.root }}/mysite recursive=no 
-#   changed_when: false
-
 - name: Copies the django project
   sudo: false
   remote_user: "{{ webapp.user }}"

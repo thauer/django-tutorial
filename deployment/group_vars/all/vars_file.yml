@@ -19,13 +19,15 @@ database: {
   password: "mypassword"
 }
 
-appserver: "{{ hostvars[groups['appserver'][0]]['ansible_fqdn'] }}:8002"
-servername: django-tutorial.hauers.net
-
 webapp: {
+  host: "{{ hostvars[groups['appserver'][0]]['ansible_fqdn'] }}",
   group: webapps,
   user: webapps,
   home: /webapps,
   virtualenv: /webapps/virtualenv,
-  root: "/webapps/{{ webapp_name }}"
+  root: "/webapps/{{ webapp_name }}",
+  port: "8002"
 }
+
+# appserver: 
+servername: django-tutorial.hauers.net

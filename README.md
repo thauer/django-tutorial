@@ -53,16 +53,22 @@ Create the project, migrate the database and run the server:
 
 The above generates the following project layout:
 
-    django-tutorial/
-    ├── db.sqlite3
-    ├── manage.py
-    └── mysite
-        ├── __init__.py
-        ├── settings.py
-        ├── urls.py
-        └── wsgi.py
-
+```
+django-tutorial/
+├── db.sqlite3
+├── manage.py
+└── mysite
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+```
 ### Production environment
+
+Deploy the project in the production environment (use `-e "dropdb=True"` to force-drop the database):
+```
+tutorial/deployment$ ansible-playbook -i hosts site.yml
+```
 
 #### Database
 
@@ -73,37 +79,37 @@ The above generates the following project layout:
 
 * Creates `webapp.{group, user, home, virtualenv}`
 * Layout:
+```   
+/webapps/django-tutorial/
+    ├── gunicorn_start.sh
+    ├── db.sqlite3
+    ├── manage.py
+    └── mysite
+        ├── __init__.py
+        ├── settings_production.py
+        ├── settings.py
+        ├── urls.py
+        └── wsgi.py
+```
+* `settings_production.py` points to the database
+* `/etc/supervisor/conf.d/gunicorn.conf`:
 
-        /webapps/django-tutorial/
-        ├── db.sqlite3
-        ├── manage.py
-        ├── mysite
-        │   ├── __init__.py
-        │   ├── settings_production.py
-        │   ├── settings.py
-        │   ├── urls.py
-        │   └── wsgi.py
-        └── static
-            └── admin
-                ├── css
-                │   ├── [...]
-                │   └── widgets.css
-                ├── img
-                │   ├── [...]
-                │   └── tooltag-arrowright.png
-                └── js
-                    ├── [...]
-                    └── urlify.js
+#### Web server
 
-
-Deploy the project in the production environment (use `-e "dropdb=True"` to force-drop the database):
-
-    tutorial/deployment$ ansible-playbook -i hosts site.yml
-
-The production environment:
-
-appserver:
-
-
-
+* Layout:
+```
+/webapps/django-tutorial
+    └── static
+        └── admin
+            ├── css
+            │   ├── [...]
+            │   └── widgets.css
+            ├── img
+            │   ├── [...]
+            │   └── tooltag-arrowright.png
+            └── js
+                ├── [...]
+                └── urlify.js
+```
+* `/etc/nginx/sites-enabled/mysite`
 
